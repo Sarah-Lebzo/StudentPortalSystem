@@ -1,0 +1,13 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+@if (ViewBag.PendingRoleMessage != null)
+{
+    <div class="alert alert-warning text-center mt-3" role="alert">
+        @ViewBag.PendingRoleMessage
+    </div>
+}
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>

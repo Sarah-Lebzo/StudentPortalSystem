@@ -1,0 +1,210 @@
+﻿@model FinalProject.Models.Course
+
+@{
+    ViewData["Title"] = "Course Details";
+}
+
+<h2>@Model.Title</h2>
+<hr />
+
+<div>
+    <dl class="row">
+        <dt class="col-sm-3">Start Date</dt>
+        <dd class="col-sm-9">@Model.StartDate.ToShortDateString()</dd>
+
+        <dt class="col-sm-3">End Date</dt>
+        <dd class="col-sm-9">@Model.EndDate.ToShortDateString()</dd>
+
+        <dt class="col-sm-3">Description</dt>
+        <dd class="col-sm-9">@Model.Description</dd>
+
+        <dt class="col-sm-3">Teachers</dt>
+        <dd class="col-sm-9">
+            @if (Model.CourseTeachers != null && Model.CourseTeachers.Any())
+            {
+                <ul>
+                    @foreach (var ct in Model.CourseTeachers)
+                    {
+                        <li>@ct.Teacher.UserName (@ct.Teacher.Email)</li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <span>No teachers assigned.</span>
+            }
+        </dd>
+    </dl>
+</div>
+
+@if (User.IsInRole("Admin") || User.IsInRole("Teacher"))
+{
+    <div class="mb-3">
+        <a asp-controller="Course" asp-action="ReviewEnrollmentRequests"
+           asp-route-courseId="@Model.Id"
+           class="btn btn-warning me-2">
+            Enrollment Requests
+        </a>
+    </div>
+
+}
+
+@if (User.IsInRole("Admin"))
+{
+    <div class="mb-3">
+        <a asp-controller="LectureSchedules" asp-action="Create"
+           asp-route-courseId="@Model.Id"
+           class="btn btn-dark">
+            Schedule Lecture
+        </a>
+    </div>
+}
+
+@if (Model.LectureSchedules != null && Model.LectureSchedules.Any())
+{
+    <h5 class="mt-4">Lecture Schedule:</h5>
+    <ul>
+        @foreach (var schedule in Model.LectureSchedules)
+        {
+            <li>
+                <strong>@schedule.DayOfWeek</strong> —
+                @schedule.StartTime.ToString(@"hh\:mm") to @schedule.EndTime.ToString(@"hh\:mm")
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p class="text-muted">No lectures scheduled.</p>
+}
+
+<hr />
+
+@if (User.IsInRole("Student"))
+{
+    <div class="mt-4">
+        @if (ViewBag.EnrollmentStatus == "Rejected")
+        {
+            <div class="alert alert-danger">
+                Your enrollment request was <strong>rejected</strong>.
+            </div>
+            <form asp-action="RemoveEnrollment" asp-controller="Course" method="post">
+                <input type="hidden" name="courseId" value="@Model.Id" />
+                <button type="submit" class="btn btn-danger">Delete Request</button>
+            </form>
+        }
+        else if (ViewBag.EnrollmentStatus == "Approved")
+        {
+            <div class="alert alert-success">
+                Your enrollment request was <strong>approved</strong>.
+            </div>
+            <form asp-action="RemoveEnrollment" asp-controller="Course" method="post">
+                <input type="hidden" name="courseId" value="@Model.Id" />
+                <button type="submit" class="btn btn-warning">Drop Course</button>
+            </form>
+        }
+        else if (ViewBag.EnrollmentStatus == "Pending")
+        {
+            <div class="alert alert-info">
+                Your enrollment request is <strong>pending</strong>.
+            </div>
+        }
+        else
+        {
+            <form asp-controller="Course" asp-action="RequestEnrollment" asp-route-courseId="@Model.Id" method="post">
+                <button type="submit" class="btn btn-success">Request Enrollment</button>
+            </form>
+
+@*             <form asp-controller="Course" asp-action="RequestEnrollment" asp-route-id="@Model.Id" method="post">
+                <button type="submit" class="btn btn-success">Request Enrollment</button>
+            </form> *@
+        }
+    </div>
+}
+
+
+<div class="mt-4">
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>
+
+@* @model FinalProject.Models.Course
+
+@{
+    ViewData["Title"] = "Course Details";
+}
+
+<h2>@Model.Title</h2>
+
+<hr />
+
+<div>
+    <dl class="row">
+        <dt class="col-sm-3">Start Date</dt>
+        <dd class="col-sm-9">@Model.StartDate.ToShortDateString()</dd>
+
+        <dt class="col-sm-3">End Date</dt>
+        <dd class="col-sm-9">@Model.EndDate.ToShortDateString()</dd>
+
+        <dt class="col-sm-3">Description</dt>
+        <dd class="col-sm-9">@Model.Description</dd>
+
+        <dt class="col-sm-3">Teachers</dt>
+        <dd class="col-sm-9">
+            @if (Model.CourseTeachers != null && Model.CourseTeachers.Any())
+            {
+                <ul>
+                    @foreach (var ct in Model.CourseTeachers)
+                    {
+                        <li>@ct.Teacher.FullName (@ct.Teacher.Email)</li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <span>No teachers assigned.</span>
+            }
+        </dd>
+    </dl>
+</div>
+@if (User.IsInRole("Admin") || User.IsInRole("Teacher"))
+{
+    <div class="mb-3">
+    <a asp-controller="Course" asp-action="ReviewEnrollmentRequests"
+       asp-route-courseId="@Model.Id"
+       class="btn btn-warning me-2">
+        Enrollment Requests
+    </a>
+    </div>
+}
+@if (User.IsInRole("Admin"))
+{
+    <div class="mb-3">
+        <a asp-controller="LectureSchedules" asp-action="Create"
+           asp-route-courseId="@Model.Id"
+           class="btn btn-dark">
+            Schedule Lecture
+        </a>
+    </div>
+}
+
+@if (Model.LectureSchedules != null && Model.LectureSchedules.Any())
+{
+    <h5 class="mt-4">Lecture Schedule:</h5>
+    <ul>
+        @foreach (var schedule in Model.LectureSchedules)
+        {
+            <li>
+                <strong>@schedule.DayOfWeek</strong> —
+                @schedule.StartTime.ToString(@"hh\:mm") to @schedule.EndTime.ToString(@"hh\:mm")
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p class="text-muted">No lectures scheduled.</p>
+}
+
+<div class="mt-4">
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div> *@

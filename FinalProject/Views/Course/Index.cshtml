@@ -1,0 +1,73 @@
+﻿@model IEnumerable<FinalProject.Models.Course>
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+@inject RoleManager<IdentityRole> RoleManager
+
+@{
+    ViewData["Title"] = "Courses";
+    var isAdmin = User.IsInRole("Admin");
+    var isStudent = User.IsInRole("Student");
+}
+@if (isStudent)
+{
+    <h3>My Courses</h3>
+
+    @foreach (var course in ViewBag.MyCourses)
+    {
+        <div>@course.Title</div>
+    }
+
+    <hr />
+}
+
+<h2>All Courses</h2>
+
+@if (isAdmin)
+{
+    <a asp-action="Create" class="btn btn-primary mb-3">Create Course</a>
+}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Teacher(s)</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var course in Model)
+        {
+            <tr>
+                <td>@course.Title</td>
+                <td>@course.StartDate.ToShortDateString()</td>
+                <td>@course.EndDate.ToShortDateString()</td>
+                <td>
+                    @if (course.CourseTeachers != null && course.CourseTeachers.Any())
+                    {
+                        @foreach (var ct in course.CourseTeachers)
+                        {
+                            <span class="badge bg-info">@ct.Teacher?.Email</span>
+                        }
+                    }
+                    else
+                    {
+                        <span class="text-muted">No Teachers Assigned</span>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@course.Id" class="btn btn-info btn-sm">Details</a>
+
+                    @if (isAdmin)
+                    {
+                        <a asp-action="Edit" asp-route-id="@course.Id" class="btn btn-warning btn-sm">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@course.Id" class="btn btn-danger btn-sm">Delete</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

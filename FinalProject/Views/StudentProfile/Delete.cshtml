@@ -1,0 +1,16 @@
+﻿@model FinalProject.Models.StudentProfile
+
+@{
+    ViewData["Title"] = "Delete Profile";
+}
+
+<h2>Are you sure you want to delete your profile?</h2>
+
+<div>
+    <h4>@Model.FullName</h4>
+    <form asp-action="DeleteConfirmed" method="post">
+        <input type="hidden" asp-for="UserId" />
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
