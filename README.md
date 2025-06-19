@@ -40,4 +40,7 @@ Teacher@gmail.com                                          Tea@1234
 User1@gmail.com                                            User1@1234
 
 بعدين  كل اشي شغال مبدايا بس انا موقفة عند attendance tracking لسا هناك ما بلشت فيه 
+لازم تعمل Update-Database -Context FinalAuthDbContext
+Update-Database -Context FinalDbAContext
+عشان الداتا بيس تصير عندك 
 
